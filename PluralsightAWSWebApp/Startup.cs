@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,12 @@ namespace PluralsightAWSWebApp
 
             services.AddControllers();
 
-            //cn
-            var connection = Configuration.GetConnectionString("BooksConnection");
+            //Create connection with user & passward
+            var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("BooksConnection"));
+            builder.UserID = Configuration["DbUser"];
+            builder.Password = Configuration["DbPassword"];
+
+            var connection = builder.ConnectionString;
             services.AddDbContext<BookContext>(options => options.UseSqlServer(connection));
         }
 
